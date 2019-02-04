@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="nuvei_acquirer_button">
+        <input type="hidden" name="data_set" t-att-data-action-url="tx_url" data-remove-me=""/>
+        <input type="hidden" name="ORDERID" t-att-value="ORDERID" />
+        <input type="hidden" name="CURRENCY" t-att-value="CURRENCY" />
+        <input type="hidden" name="AMOUNT" t-att-value="AMOUNT" />
+        <input type="hidden" name="TERMINALID" t-att-value="TERMINALID" />
+        <input type="hidden" name="DATETIME" t-att-value="DATETIME_VALUE" />
+        <input type="hidden" name="RECEIPTPAGEURL" t-att-value="RECEIPTPAGEURL" />
+        <input type="hidden" name="SECURECARDMERCHANTREF" t-att-value="SECURECARDMERCHANTREF" />
+        <input type="hidden" name="HASH" t-att-value="HASH" />
+    </template>
+
+</odoo>

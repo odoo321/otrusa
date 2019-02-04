@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="authorize_and_capture_wizard_form_view" model="ir.ui.view">
+        <field name="name">authorize.and.capture.wizard.form</field>
+        <field name="model">authorize.and.capture.wizard</field>
+        <field name="arch" type="xml">
+            <form name="Authorize &amp; Capture">
+                <group>
+                    <field name="partner_id" readonly="1" />
+                    <field name="order_id" invisible="1" />
+                    <field name="currency_id" invisible="1"/>
+                    <field name="amount" readonly="1"/>
+                </group>
+                <group string="Card Info">
+                    <field name="card_number" />
+                    <field name="expiry_month" />
+                    <field name="expiry_year" />
+                </group>
+                <footer>
+                    <button name="authorize_and_capture" type="object" string="Authorize &amp; Capture" class="or_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="authorize_and_capture_action" model="ir.actions.act_window">
+        <field name="name">Authorize &amp; Capture</field>
+        <field name="res_model">authorize.and.capture.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="authorize_and_capture_wizard_form_view"/>
+        <field name="context">{}</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

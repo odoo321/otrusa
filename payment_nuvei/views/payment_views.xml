@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="payment_acquirer_form_nuvei" model="ir.ui.view">
+        <field name="name">payment.acquirer.form.inherit</field>
+        <field name="model">payment.acquirer</field>
+        <field name="inherit_id" ref="payment.acquirer_form"/>
+        <field name="arch" type="xml">
+            <xpath expr='//group[@name="acquirer"]' position='after'>
+                <group attrs="{'invisible': [('provider', '!=', 'nuvei')]}">
+                    <field name="nuvei_terminalid"/>
+                    <field name="nuvei_secret"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="token_form_nuvei" model="ir.ui.view">
+        <field name='name'>payment.token.form</field>
+        <field name='model'>payment.token</field>
+        <field name="inherit_id" ref="payment.payment_token_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr='//field[@name="acquirer_ref"]' position='after'>
+                <field name="provider" invisible="1" />
+                <field name="card_expiry" attrs="{'invisible': [('provider', '!=', 'nuvei')]}"/>
+                <field name="card_type" attrs="{'invisible': [('provider', '!=', 'nuvei')]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

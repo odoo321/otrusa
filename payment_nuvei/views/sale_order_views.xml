@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sale_order_form_inherit_nuvei" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.nuvei</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <button name="action_cancel" position="before">
+                <button name="%(authorize_and_capture_action)d" type="action" string="Authorize &amp; Capture" states="draft, sent" context="{'default_order_id': id, 'default_partner_id': partner_id}" />
+            </button>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="payment.payment_acquirer_nuvei" model="payment.acquirer">
+            <field name="name">Nuvei</field>
+            <field name="image" type="base64" file="payment_nuvei/static/src/img/nuvei_icon.jpg" />
+            <field name="provider">nuvei</field>
+            <field name="nuvei_terminalid">36001</field>
+            <field name="nuvei_secret">SandboxSecret001</field>
+            <field name="company_id" ref="base.main_company" />
+            <field name="view_template_id" ref="nuvei_acquirer_button" />
+            <field name="environment">test</field>
+            <field name="save_token">ask</field>
+            <field name="pre_msg"><![CDATA[<p>You will be redirected to the nuvei website after clicking on the payment button.</p>]]></field>
+        </record>
+
+    </data>
+</odoo>
