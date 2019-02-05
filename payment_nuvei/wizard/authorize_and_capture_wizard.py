@@ -20,11 +20,24 @@ class AuthorizeAndCaptureWizard(models.TransientModel):
     currency_id = fields.Many2one('res.currency', related='order_id.currency_id',)
     amount = fields.Monetary("Amount", related='order_id.amount_total')
     partner_id = fields.Many2one('res.partner', "Customer")
-    card_number = fields.Char("Card Number", required=True)
-    expiry_month = fields.Char("Expiry Month", required=True)
-    expiry_year = fields.Char("Expiry Year", required=True)
+    card_number = fields.Char("Card Number", required=True, size=16)
+    expiry_month = fields.Selection(
+        [('01', '01-Jan'), ('02', '02-Feb'), ('03', '03-Mar'), ('04', '04-Apr'), ('05', '05-May'), ('06', '06-Jun'),
+         ('07', '07-Jul'), ('08', '08-Aug'), ('09', '09-Sep'), ('10', '10-Oct'), ('11', '11-Nov'), ('12', '12-Dec')], string='Expiry Month', required=True)
+    expiry_year = fields.Selection(
+        [('19', '2019'), ('20', '2020'), ('21', '2021'), ('22', '2022'), ('23', '2023'), ('24', '2024'), ('25', '2025'),
+         ('26', '2026'), ('27', '2027'), ('28', '2028'), ('29', '2029'), ('30', '2030'), ('31', '2031'), ('32', '2032'),
+         ('33', '2033'), ('34', '2034'), ('35', '2035'), ('36', '2036'), ('37', '2037'), ('38', '2038'), ('39', '2039'),
+         ('40', '2040')],
+        string='Expiry Year', required=True)
 
     def authorize_and_capture(self):
+        if self.amount <= 0.0:
+            raise ValidationError(_("Payment amount is not proper."))
+        elif len(self.card_number) < 16:
+            raise ValidationError(_("Card Number is not with proper length(16)."))
+        elif not self.card_number.isdigit():
+            raise ValidationError(_("Card number is not in digit, Please enter proper card details."))
 
         acquirer_id = self.env['payment.acquirer'].search([('provider', '=', 'nuvei')])
 
@@ -69,6 +82,7 @@ class AuthorizeAndCaptureWizard(models.TransientModel):
                                                          'currency_id': self.order_id.currency_id.id,
                                                          'partner_id': self.partner_id.id})
 
+            _logger.info('nuvei: Authorize & Capture wizard response %s', pprint.pformat(res))
             doc = xmltodict.parse(res, dict_constructor=dict)
             data = doc.get("PAYMENTRESPONSE", doc)
             status = data.get('RESPONSECODE', False)
