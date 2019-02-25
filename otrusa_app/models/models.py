@@ -15,6 +15,6 @@ from odoo import models, fields, api
 #         self.value2 = float(self.value) / 100
 
 class sale_order_line(models.Model):
-    _inherit= 'res.sale.order.line'
+    _inherit= 'sale.order.line'
 
     x_stock_quant_app = fields.One2many('stock.quant','product_id',related='product_id.x_stock_quant'),
