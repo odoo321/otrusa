@@ -17,4 +17,4 @@ from odoo import models, fields, api
 class sale_order_line(models.Model):
     _inherit= 'res.sale.order.line'
 
-    x_stock_quant_app = fields.one2many('stock.quant','product_id',),
+    x_stock_quant_app = fields.One2many('stock.quant','product_id',related='product_id.x_stock_quant'),
