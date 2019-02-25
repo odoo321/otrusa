@@ -13,3 +13,10 @@ from odoo import models, fields, api
 #     @api.depends('value')
 #     def _value_pc(self):
 #         self.value2 = float(self.value) / 100
+
+class sale_order_line(models.Model):
+    _inherit= 'sale.order.line'
+
+    test_stock_quant = fields.One2many('stock.quant','product_id',related='product_id.x_stock_quant')
+    credit_limit_app = fields.Float('Credit Limit')
+    credit_limit_on_hold  = fields.Boolean('Credit limit on hold')
