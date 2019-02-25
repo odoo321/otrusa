@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 {
     'name': "otrusa_app",
-    'version': 'beta 1.0',
+    'version': 'beta.1.0',
     'category': 'Warehouse',
     'sequence': 1,
     'summary':
         """
             Custom app by OTRUSA.COM
         """,
-    'description': 
+    'description':
         """
             This app contain modification of view for OTRUSA.COM
         """,

@@ -13,3 +13,8 @@ from odoo import models, fields, api
 #     @api.depends('value')
 #     def _value_pc(self):
 #         self.value2 = float(self.value) / 100
+
+class sale_order_line(models.Model):
+    _inherit= 'res.sale.order.line'
+
+    x_stock_quant_app = fields.one2many('stock.quant','product_id',),
