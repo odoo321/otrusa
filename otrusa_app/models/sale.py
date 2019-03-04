@@ -17,7 +17,3 @@ from odoo import models, fields, api
 class sale_order(models.Model):
     _inherit= 'sale.order'
     x_test_otrusa = fields.Float('test_otrusa')
-
-    @api.one
-    def x_sale_order_dropship(self):
-        self.x_qb = '9999'
