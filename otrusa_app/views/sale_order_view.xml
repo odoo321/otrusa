@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-        <record id="x_sale.order.dropship.b" model="ir.ui.view">
+        <record id="x_sale.order.dropship" model="ir.ui.view">
             <field name="name">x_sale.order.dropship</field>
             <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="inherit_id" ref="studio_customization.x_sale_order_form_5f41b6f5-fbbc-4bc4-a17d-a0dc06854a67"/>
             <field name="arch" type="xml">
 
-                <xpath expr="//field[@name='name']" position="after">
+                <xpath expr="//field[@name='x_qb']" position="after">
                   <button name="x_set_dropship_route_id" type="object"
                       states="draft,sent"
                       string="Set date to all order lines"

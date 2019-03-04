@@ -18,14 +18,10 @@
     'depends': ['stock','sale','account'], # any module necessary for this one to work correctly
     'data': [
                 # 'security/ir.model.access.csv',
-                'views/views.xml',
-                'views/templates.xml',
+                'views/sale_order_view.xml',
             ],
     'installable': True,
     'auto_install': False,
     'application': True,
     # only loaded in demonstration mode
-    'demo': [
-                'demo.xml',
-            ],
 }
