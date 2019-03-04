@@ -8,9 +8,8 @@
 
                 <xpath expr="//field[@name='x_qb']" position="after">
                   <button name="x_set_dropship_route_id" type="object"
-                      states="draft,sent"
                       string="Set date to all order lines"
-                      help="This changes the scheduled date of all order lines to the given date"
+                      help="Test"
                       class="fa fa-calendar o_icon_button"/>
                 </xpath>
 

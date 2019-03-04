@@ -15,7 +15,7 @@
     'author': "OTRUSA.COM",
     'website': "http://www.otrusa.com",
     'images': ['images/main_screenshot.png'],
-    'depends': ['stock','sale','account'], # any module necessary for this one to work correctly
+    'depends': ['stock','sale','account','purchase'], # any module necessary for this one to work correctly
     'data': [
                 # 'security/ir.model.access.csv',
                 'views/sale_order_view.xml',
@@ -23,5 +23,6 @@
     'installable': True,
     'auto_install': False,
     'application': True,
+
     # only loaded in demonstration mode
 }

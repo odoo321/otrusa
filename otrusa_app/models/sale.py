@@ -20,5 +20,4 @@ class sale_order(models.Model):
 
     @api.multi
     def x_sale_order_dropship(self):
-        dropship_route = 6.0
-        self.x_test = dropship_route
+        self.x_qb = self.id
