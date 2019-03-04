@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
             <button name="action_cancel" position="before">
-                <button name="%(authorize_and_capture_action)d" type="action" string="Authorize &amp; Capture" states="draft, sent" context="{'default_order_id': id, 'default_partner_id': partner_id}" />
+                <button name="%(authorize_and_capture_action)d" type="action" string="Authorize &amp; Capture" states="draft,sent,sale" context="{'default_order_id': id, 'default_partner_id': partner_id}" />
             </button>
         </field>
     </record>

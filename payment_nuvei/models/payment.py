@@ -56,7 +56,7 @@ class PaymentAcquirerNuvei(models.Model):
         CURRENCY = values['currency'] and values['currency'].name or ''
         AMOUNT = values['amount'] and values['amount'] or ''
         DATETIME_VALUE = datetime.now().strftime('%d-%m-%Y:%H:%M:%S:%f')[:-3]
-        RECEIPTPAGEURL = base_url + '/payment/nuvei/return'
+        RECEIPTPAGEURL = base_url + (values.get('return_url', False) if 'invoice' in values['return_url'] else '/payment/nuvei/return')
         TERMINALID = self.nuvei_terminalid
         SECRET = self.nuvei_secret
 
@@ -120,13 +120,13 @@ class PaymentTransactionNuvei(models.Model):
         res = {
             'acquirer_reference': data.get('ORDERID'),
             'date_validate': fields.Datetime.now(),
-            'state_message': data.get('RESPONSETEXT')
+            'state_message': data.get('RESPONSETEXT') + '\n\n' + str(data)
         }
         if status == 'A':
             _logger.info('Validated Nuvei payment for reference %s: set as done' % pprint.pformat(self.reference))
             res.update(state='done')
             self.write(res)
-            self.x_sb_wo_n = self.sale_order_id.x_sb_wo_n
+            self.x_payment_channel = 'gop_cc'
             if self.partner_id and not self.payment_token_id and (self.type == 'form_save' or self.acquirer_id.save_token == 'always'):
                 token_id = self.env['payment.token'].create({
                     'name': data.get('UNIQUEREF', False),
@@ -195,9 +195,10 @@ class PaymentTransactionNuvei(models.Model):
         data = doc.get("PAYMENTRESPONSE", doc)
         status = data.get('RESPONSECODE', False)
         res = {
+            'x_payment_channel': 'gop_cc',
             'acquirer_reference': data.get('UNIQUEREF', False),
             'date_validate': fields.Datetime.now(),
-            'state_message': data.get('RESPONSETEXT', False)
+            'state_message': data.get('RESPONSETEXT', False) + '\n\n' + str(data)
         }
         if status == 'A':
             _logger.info('Validated Nuvei payment for reference %s: set as done' % pprint.pformat(self.reference))
@@ -236,7 +237,6 @@ class PaymentTransactionNuvei(models.Model):
                     'amount': tx.amount,
                     'journal_id': tx.acquirer_id.journal_id.id,
                     'communication': invoice.number,
-                    'x_sb_wo_n': tx.x_sb_wo_n
                 }
                 account_payment_id = self.env['account.payment'].create(vals)
                 account_payment_id.write({'payment_transaction_id': tx.id, 'invoice_ids': [(4, invoice.id)]})
@@ -305,6 +305,7 @@ class PaymentTransactionNuvei(models.Model):
             _logger.warning('<%s> transaction MISMATCH for order %s (ID %s)', self.acquirer_id.provider, self.sale_order_id.name, self.sale_order_id.id)
             return 'pay_sale_tx_state'
         return True
+
 
 class PaymentToken(models.Model):
     _inherit = 'payment.token'

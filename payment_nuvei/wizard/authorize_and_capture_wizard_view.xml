@@ -8,7 +8,7 @@
             <form name="Authorize &amp; Capture">
                 <group>
                     <field name="partner_id" readonly="1" />
-                    <field name="order_id" invisible="1" />
+                    <field name="order_id" readonly="1" />
                     <field name="currency_id" invisible="1"/>
                     <field name="amount" readonly="1"/>
                 </group>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="invoice_payment" name="Invoice Payment">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Invoice Payment</t>
+            <t t-set="no_footer">1</t>
+
+            <div id="wrap">
+                <div class="container oe_website_sale">
+                    <div class="row">
+                        <div class="col-md-offset-2 col-lg-8 col-sm-9 mt32" t-if="errors">
+                            <t t-foreach="errors" t-as="error">
+                                <div class="alert alert-danger" t-if="error">
+                                    <h4>
+                                        <t t-esc="error[0]"/>
+                                    </h4>
+                                    <t t-esc="error[1]"/>
+                                </div>
+                            </t>
+                        </div>
+                        <div t-if="not errors" class="col-md-8 col-md-offset-2">
+                            <div class="row text-center">
+                                <t t-if="invoice and invoice.state == 'open'">
+                                    <input type="hidden" id="custom_invoice_id" name="custom_invoice_id" t-att-value="invoice.id" />
+                                    <div class='col-md-12 o_website_sale_rightfit mt32'>
+                                        <h2 class="mb8 mt8">Invoice Details</h2>
+                                        <table class="table table-striped table-condensed" id="invoice_products">
+                                            <thead>
+                                                <tr>
+                                                    <th class='td-img'>Product</th>
+                                                    <th></th>
+                                                    <th class='td-qty'>Quantity</th>
+                                                    <th class='text-center td-price'>Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr t-foreach="invoice.invoice_line_ids" t-as="line">
+                                                    <td class='' colspan="2" t-if="not line.product_id.product_tmpl_id"></td>
+                                                    <td class='td-img' t-if="line.product_id.product_tmpl_id">
+                                                        <a t-attf-href="/shop/product/#{ slug(line.product_id.product_tmpl_id) }">
+                                                            <span t-field="line.product_id.image_small" t-options="{'widget': 'image', 'class': 'img-rounded'}"/>
+                                                        </a>
+                                                    </td>
+                                                    <td class='td-product_name' t-if="line.product_id.product_tmpl_id">
+                                                        <div>
+                                                            <strong t-field="line.product_id.with_context(display_default_code=False).display_name"/>
+                                                        </div>
+                                                        <div class="text-muted hidden-xs small">
+                                                            <t t-foreach="line.name.splitlines()[1:]" t-as="name_line">
+                                                                <span>
+                                                                    <t t-esc="name_line"/>
+                                                                </span>
+                                                                <br/>
+                                                            </t>
+                                                        </div>
+                                                    </td>
+                                                    <td class='td-qty'>
+                                                        <div t-esc="int(line.quantity) == line.quantity and int(line.quantity) or line.quantity"/>
+                                                    </td>
+                                                    <td class="text-center td-price">
+                                                        <span t-field="line.price_subtotal"
+                                                              style="white-space: nowrap;"
+                                                              t-options="{'widget': 'monetary'}"/>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <t t-call="payment_nuvei.invoice_total">
+                                            <t t-set='extra_class' t-value='"col-xs-12 col-sm-5 col-sm-push-7"'/>
+                                            <t t-set='redirect'>/shop/payment</t>
+                                        </t>
+                                    </div>
+                                    <div class="clearfix"/>
+                                    <div class="oe_structure"/>
+
+                                    <div class="pull-right">
+                                        <button id="o_custom_payment_form_pay" type="submit" class="btn btn-primary btn-lg mb8 mt8">
+                                            <i class="fa fa-lock"> Pay Now</i>
+                                        </button>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <h2 class="mb32 mt32">Invoice is in draft/paid state! Please contact us.</h2>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="invoice_total">
+        <div id="cart_total" t-att-class="extra_class or ''" t-if="invoice and invoice.invoice_line_ids">
+            <div class="row" id="order_total_untaxed">
+                <span class="col-xs-6 text-right text-muted">Subtotal:</span>
+                <span class="col-xs-6 text-right-not-xs text-left-xs text-muted">
+                    <span t-field="invoice.amount_untaxed" style="white-space: nowrap;"
+                          t-options="{'widget': 'monetary'}"/>
+                </span>
+            </div>
+            <div class="row" id="order_total_taxes">
+                <span class="col-xs-6 text-right text-muted"
+                      title="Taxes may be updated after providing shipping address">Taxes:
+                </span>
+                <span class="col-xs-6 text-right-not-xs text-left-xs text-muted">
+                    <span t-field="invoice.amount_tax" style="white-space: nowrap;"
+                          t-options="{'widget': 'monetary'}"/>
+                </span>
+            </div>
+            <div class="row" id="order_total">
+                <hr class="mt8 mb0"/>
+                <span class="col-xs-6 text-right h4 mt0">Total:</span>
+                <span class="col-xs-6 text-right-not-xs text-left-xs h4 mt0" style="white-space: nowrap;">
+                    <span t-field="invoice.amount_total" style="white-space: nowrap;"
+                          t-options="{'widget': 'monetary'}"/>
+                </span>
+            </div>
+        </div>
+    </template>
+
+    <template id="invoice_payment_result" name="Invoice Payment Result">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Invoice Payment Result</t>
+
+            <div id="wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-offset-2 col-lg-8 col-sm-9 mt32" t-if="errors">
+                            <t t-foreach="errors" t-as="error">
+                                <div class="alert alert-danger" t-if="error">
+                                    <h4>
+                                        <t t-esc="error[0]"/>
+                                    </h4>
+                                    <t t-esc="error[1]"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="row">
+                        <t t-if="invoice and invoice.state == 'paid'">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <div class="thanks_msg">
+                                        <h2>Payment Done, Thank you for your payment.</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="row text-center">
+                        <t t-if="invoice and invoice.invoice_line_ids">
+                            <input type="hidden" id="custom_invoice_id" name="custom_invoice_id" t-att-value="invoice.id" />
+                            <div class='col-md-12 o_website_sale_rightfit mt32'>
+                                <h2 class="mb8 mt8">Invoice: <span t-field="invoice.number" /></h2>
+                                <table class="table table-striped table-condensed" id="invoice_products">
+                                    <thead>
+                                        <tr>
+                                            <th class='td-img'>Product</th>
+                                            <th></th>
+                                            <th class='td-qty'>Quantity</th>
+                                            <th class='text-center td-price'>Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="invoice.invoice_line_ids" t-as="line">
+                                            <td class='' colspan="2" t-if="not line.product_id.product_tmpl_id"></td>
+                                            <td class='td-img' t-if="line.product_id.product_tmpl_id">
+                                                <a t-attf-href="/shop/product/#{ slug(line.product_id.product_tmpl_id) }">
+                                                    <span t-field="line.product_id.image_small"
+                                                          t-options="{'widget': 'image', 'class': 'img-rounded'}"/>
+                                                </a>
+                                            </td>
+                                            <td class='td-product_name' t-if="line.product_id.product_tmpl_id">
+                                                <div>
+                                                    <strong t-field="line.product_id.with_context(display_default_code=False).display_name"/>
+                                                </div>
+                                                <div class="text-muted hidden-xs small">
+                                                    <t t-foreach="line.name.splitlines()[1:]" t-as="name_line">
+                                                        <span>
+                                                            <t t-esc="name_line"/>
+                                                        </span>
+                                                        <br/>
+                                                    </t>
+                                                </div>
+                                            </td>
+                                            <td class='td-qty'>
+                                                <div t-esc="int(line.quantity) == line.quantity and int(line.quantity) or line.quantity"/>
+                                            </td>
+                                            <td class="text-center td-price">
+                                                <span t-field="line.price_subtotal"
+                                                      style="white-space: nowrap;"
+                                                      t-options="{'widget': 'monetary'}"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-12">
+                                <t t-call="payment_nuvei.invoice_total">
+                                    <t t-set='extra_class' t-value='"col-xs-12 col-sm-5 col-sm-push-7"'/>
+                                    <t t-set='redirect'>/shop/payment</t>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+
+</odoo>

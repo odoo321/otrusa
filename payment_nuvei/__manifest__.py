@@ -26,9 +26,12 @@ Changelog
     'external_dependencies': {'python': ['xmltodict']},
     'data': [
         'wizard/authorize_and_capture_wizard_view.xml',
+        'views/assets.xml',
+        'views/invoice_payment_template.xml',
         'views/payment_views.xml',
         'views/sale_order_views.xml',
         'views/payment_nuvei_templates.xml',
+        'data/email_templates.xml',
         'data/payment_acquirer_data.xml',
     ],
     'demo': [

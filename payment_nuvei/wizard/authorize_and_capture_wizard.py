@@ -89,7 +89,7 @@ class AuthorizeAndCaptureWizard(models.TransientModel):
             res = {
                 'acquirer_reference': data.get('UNIQUEREF', False),
                 'date_validate': fields.Datetime.now(),
-                'state_message': data.get('RESPONSETEXT', False)
+                'state_message': data.get('RESPONSETEXT', False) + '\n\n' + str(res)
             }
             if status == 'A':
                 _logger.info('Validated Nuvei payment for reference %s: set as done' % pprint.pformat(tx.reference))
