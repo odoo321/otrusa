@@ -20,4 +20,6 @@ class sale_order(models.Model):
 
     @api.multi
     def x_sale_order_dropship(self):
+        res=[]
         self.x_qb = self.id
+    return res
