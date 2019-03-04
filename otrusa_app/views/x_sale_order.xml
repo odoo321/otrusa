@@ -3,11 +3,15 @@
         <record id="x_sale.order.dropship.b" model="ir.ui.view">
             <field name="name">x_sale.order.dropship</field>
             <field name="model">sale.order</field>
-            <field name="inherit_id" ref="x_sale.order.view.form"/>
+            <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
 
-                <xpath expr="//field[@name='x_qb']" position="after">
-                  	<button string="Confirm" name="x_set_dropship_route_id" type="object" class="oe_highlight"/>
+                <xpath expr="//field[@name='name']" position="after">
+                  <button name="x_set_dropship_route_id" type="object"
+                      states="draft,sent"
+                      string="Set date to all order lines"
+                      help="This changes the scheduled date of all order lines to the given date"
+                      class="fa fa-calendar o_icon_button oe_edit_only"/>
                 </xpath>
 
             </field>

@@ -14,10 +14,6 @@ from odoo import models, fields, api
 #     def _value_pc(self):
 #         self.value2 = float(self.value) / 100
 
-
-
-
-
 class sale_order(models.Model):
     _inherit= 'sale.order'
 
