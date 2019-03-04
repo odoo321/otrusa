@@ -11,7 +11,7 @@
                       states="draft,sent"
                       string="Set date to all order lines"
                       help="This changes the scheduled date of all order lines to the given date"
-                      class="fa fa-calendar o_icon_button oe_edit_only"/>
+                      class="fa fa-calendar o_icon_button"/>
                 </xpath>
 
             </field>

@@ -16,11 +16,9 @@ from odoo import models, fields, api
 
 class sale_order(models.Model):
     _inherit= 'sale.order'
-
     x_test_otrusa = fields.Float('test_otrusa')
 
-@api.multi
-def x_set_dropship_route_id(self):
-    for order in self:
-        test = 6
-        order.order_line.route_id = 6
+    @api.multi
+    def x_sale_order_dropship(self):
+        for order in self:
+            order.order_line.update({'route_id': order.date_planned})
