@@ -7,7 +7,7 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='x_qb']" position="after">
-                  <button name="x_set_dropship_route_id" type="object"
+                  <button name="test01" type="object"
                       string="Set date to all order lines"
                       help="Test"
                       class="fa fa-calendar o_icon_button"/>
