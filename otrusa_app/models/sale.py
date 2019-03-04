@@ -18,8 +18,6 @@ class sale_order(models.Model):
     _inherit= 'sale.order'
     x_test_otrusa = fields.Float('test_otrusa')
 
-    @api.multi
+    @api.one
     def x_sale_order_dropship(self):
-        res=[]
-        self.x_qb = self.id
-    return res
+        self.x_qb = '9999'
