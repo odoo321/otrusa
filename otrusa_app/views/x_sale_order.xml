@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="view_sale_order_confirm_inherit_form" model="ir.ui.view">
+            <field name="name">x_sale.order.dropship.b</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="x_sale.order.view.form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='user_id']" position="after">
+                  	<button string="Confirm" name="x_set_dropship_route_id" type="object" class="oe_highlight"/>
+                </xpath>
+
+            </field>
+        </record>
+</odoo>

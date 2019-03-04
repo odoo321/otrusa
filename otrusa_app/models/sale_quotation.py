@@ -23,8 +23,6 @@ class sale_order(models.Model):
 
     x_test_otrusa = fields.Float('test_otrusa')
 
-
-
 @api.multi
 def x_set_dropship_route_id(self):
     for order in self:
