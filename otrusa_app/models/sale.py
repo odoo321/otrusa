@@ -20,8 +20,8 @@ class sale_order(models.Model):
 
     @api.multi
     def x_sale_order_dropship(self):
-        dropship_route = 6
+        dropship_route = 6.0
         for order in self:
             order.order_line.update({
-                'route_id': dropship_route
+                'x_text': dropship_route
             })
