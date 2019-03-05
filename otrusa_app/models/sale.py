@@ -7,6 +7,6 @@ class saleOrder(models.Model):
     x_test_otrusa = fields.Float('test_otrusa')
 
     @api.multi
-    def test01(self):
+    def x_dropship_route(self):
         for order in self:
             order.order_line.update({'x_description': order.x_internal_note})
