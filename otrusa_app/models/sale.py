@@ -10,4 +10,4 @@ class saleOrder(models.Model):
     @api.multi
     def x_dropship_route(self):
         for order in self:
-            order.order_line.update({'x_description': order.x_internal_note})
+            order.order_line.update({'route_id': 6})
