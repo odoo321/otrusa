@@ -2,7 +2,7 @@
 
 from odoo import models, fields, api
 
-class sale_order(models.Model):
+class saleOrder(models.Model):
     _inherit= 'sale.order'
     x_test_otrusa = fields.Float('test_otrusa')
 
@@ -18,3 +18,8 @@ class sale_order(models.Model):
         else:
             action = {'type': 'ir.actions.act_window_close'}
         return action
+
+
+
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
