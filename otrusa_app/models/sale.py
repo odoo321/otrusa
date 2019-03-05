@@ -6,6 +6,7 @@ class saleOrder(models.Model):
     _inherit= 'sale.order'
     x_test_otrusa = fields.Float('test_otrusa')
 
+
     @api.multi
     def x_dropship_route(self):
         for order in self:
