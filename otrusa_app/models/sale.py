@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#231231
 from odoo import models, fields, api
 
 class saleOrder(models.Model):
