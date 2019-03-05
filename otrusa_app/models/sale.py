@@ -19,6 +19,6 @@ class saleOrder(models.Model):
     def x_dropship_route_counter(self):
         self.ensure_one()
         self.x_drop_ship = False
-        self.warehouse_id = False
+        self.warehouse_id = 1
         for order in self:
             order.order_line.update({'route_id': False})
