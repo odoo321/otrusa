@@ -95,6 +95,7 @@ class AuthorizeAndCaptureWizard(models.TransientModel):
                 _logger.info('Validated Nuvei payment for reference %s: set as done' % pprint.pformat(tx.reference))
                 res.update(state='done')
                 tx.write(res)
+                tx.x_payment_channel = 'gop_cc'
                 tx._confirm_so()
                 if tx and tx.sale_order_id.invoice_status == 'to invoice':
                     tx.sale_order_id._create_invoices()
