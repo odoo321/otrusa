@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="purchase_order_sale_ref_attachment_form_view_ept" model="ir.ui.view">
+		<field name="name">purchase.order.form.view.ept</field>
+		<field name="model">purchase.order</field>
+		<field name="type">form</field>
+		<field name="inherit_id" ref="purchase.purchase_order_form" />
+		<field name="arch" type="xml">
+            <xpath expr="//button[@name='button_draft']" position="after">
+                <button name="button_draft" states="done" string="Set to Draft" type="object" groups="purchase.group_purchase_manager"/>
+             </xpath>
+             <xpath expr="//button[@name='button_cancel']" position="after">
+                 <button name="button_cancel" states="done" string="Cancel" type="object" groups="purchase.group_purchase_manager"/>
+             </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="sale_order_inherit_view">
+        <field name="name">sale.order.inherit.view</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+             <xpath expr="/form/header/button[@name='action_draft']" position="after">
+                <button name="action_draft" states="done" type="object" string="Set to Quotation" groups="sales_team.group_sale_manager"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
