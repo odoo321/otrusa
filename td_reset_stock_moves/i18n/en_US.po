@@ -1,0 +1,154 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* td_reset_stock_moves
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-04-16 05:33+0000\n"
+"PO-Revision-Date: 2018-04-16 05:33+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "- Cancel all selected stock moves."
+msgstr "- Cancel all selected stock moves."
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "- Delete all related quants movements,"
+msgstr "- Delete all related quants movements,"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "- Delete all selected stock moves."
+msgstr "- Delete all selected stock moves."
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "- Delete related quants movements,"
+msgstr "- Delete related quants movements,"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "1) When You Delete Stock Moves,"
+msgstr "1) When You Delete Stock Moves,"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "2) When You Cancel Stock Moves,"
+msgstr "2) When You Cancel Stock Moves,"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "Are you sure to delete/cancel incorrect moves?"
+msgstr "Are you sure to delete/cancel incorrect moves?"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "Cancel Moves"
+msgstr "Cancel Moves"
+
+#. module: td_reset_stock_moves
+#: model:ir.model.fields,field_description:td_reset_stock_moves.field_reset_incorrect_moves_create_uid
+msgid "Created by"
+msgstr "Created by"
+
+#. module: td_reset_stock_moves
+#: model:ir.model.fields,field_description:td_reset_stock_moves.field_reset_incorrect_moves_create_date
+msgid "Created on"
+msgstr "Created on"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "Delete Incorrect Moves"
+msgstr "Delete Incorrect Moves"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "Delete Moves"
+msgstr "Delete Moves"
+
+#. module: td_reset_stock_moves
+#: model:ir.actions.act_window,name:td_reset_stock_moves.delete_incorrect_moves_window
+msgid "Delete/Cancel Moves"
+msgstr "Delete/Cancel Moves"
+
+#. module: td_reset_stock_moves
+#: model:res.groups,name:td_reset_stock_moves.group_delete_stock_moves
+msgid "Delete/Cancel Wrong Stock Moves"
+msgstr "Delete/Cancel Wrong Stock Moves"
+
+#. module: td_reset_stock_moves
+#: model:ir.model.fields,field_description:td_reset_stock_moves.field_reset_incorrect_moves_display_name
+msgid "Display Name"
+msgstr "Display Name"
+
+#. module: td_reset_stock_moves
+#: model:ir.model.fields,field_description:td_reset_stock_moves.field_reset_incorrect_moves_id
+msgid "ID"
+msgstr "ID"
+
+#. module: td_reset_stock_moves
+#: model:ir.model.fields,field_description:td_reset_stock_moves.field_reset_incorrect_moves___last_update
+msgid "Last Modified on"
+msgstr "Last Modified on"
+
+#. module: td_reset_stock_moves
+#: model:ir.model.fields,field_description:td_reset_stock_moves.field_reset_incorrect_moves_write_uid
+msgid "Last Updated by"
+msgstr "Last Updated by"
+
+#. module: td_reset_stock_moves
+#: model:ir.model.fields,field_description:td_reset_stock_moves.field_reset_incorrect_moves_write_date
+msgid "Last Updated on"
+msgstr "Last Updated on"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "Note : Moves will permanently delete from database, you cannot undo it."
+msgstr "Note : Moves will permanently delete from database, you cannot undo it."
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "Note :Moves will stay into system with cancel states."
+msgstr "Note :Moves will stay into system with cancel states."
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "Skip"
+msgstr "Skip"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "When you cancel any moves , it will keep data into odoo so you can see in future that those moves we were cancelled before."
+msgstr "When you cancel any moves , it will keep data into odoo so you can see in future that those moves we were cancelled before."
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "When you delete any moves , it will completely delete from database so you cannot undo it.Please make sure before deleting."
+msgstr "When you delete any moves , it will completely delete from database so you cannot undo it.Please make sure before deleting."
+
+#. module: td_reset_stock_moves
+#: code:addons/td_reset_stock_moves/wizard/reset_move.py:16
+#: code:addons/td_reset_stock_moves/wizard/reset_move.py:43
+#, python-format
+msgid "You don\"t have access permission to delete/hide wrong moves, please contact to administrator!"
+msgstr "You don\"t have access permission to delete/hide wrong moves, please contact to administrator!"
+
+#. module: td_reset_stock_moves
+#: model:ir.ui.view,arch_db:td_reset_stock_moves.delete_incorrect_moves_view
+msgid "or"
+msgstr "or"
+
+#. module: td_reset_stock_moves
+#: model:ir.model,name:td_reset_stock_moves.model_reset_incorrect_moves
+msgid "reset.incorrect.moves"
+msgstr "reset.incorrect.moves"
+
