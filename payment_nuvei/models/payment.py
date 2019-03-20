@@ -121,9 +121,9 @@ class PaymentTransactionNuvei(models.Model):
         status = data.get('RESPONSECODE')
         res = {
             'acquirer_reference': data.get('ORDERID'),
-            'x_order_trans_id': date.get('ORDERID'),
+            'x_order_trans_id': data.get('ORDERID'),
             'date_validate': fields.Datetime.now(),
-            'state_message': data.get('RESPONSETEXT') + '\n\n' + str(data)
+            'x_note': data.get('RESPONSETEXT') + '\n\n' + str(data)
         }
         if status == 'A':
             _logger.info('Validated Nuvei payment for reference %s: set as done' % pprint.pformat(self.reference))
@@ -209,7 +209,7 @@ class PaymentTransactionNuvei(models.Model):
             'x_payment_channel': 'gop_ach',
             'acquirer_reference': data.get('UNIQUEREF', False),
             'date_validate': fields.Datetime.now(),
-            'state_message': data.get('RESPONSETEXT', False) + '\n\n' + str(data)
+            'x_note': data.get('RESPONSETEXT', False) + '\n\n' + str(data)
         }
         if status == 'A':
             _logger.info('Validated Nuvei payment for reference %s: set as done' % pprint.pformat(self.reference))

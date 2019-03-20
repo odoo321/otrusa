@@ -41,7 +41,7 @@ class NuveiController(http.Controller):
                 'x_exp_year': post.get('CARDEXPIRY', False) and post['CARDEXPIRY'][-2:] or '',
                 'x_order_trans_date': datetime.strptime(post.get('DATETIME', False), '%Y-%m-%dT%H:%M:%S'),
                 'state': 'draft',
-                'state_message': post.get('RESPONSETEXT') + '\n\n' + str(post),
+                'x_note': post.get('RESPONSETEXT') + '\n\n' + str(post),
             }
             transaction_id = request.env['payment.transaction'].sudo().create(res)
 
