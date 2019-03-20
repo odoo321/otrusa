@@ -7,7 +7,7 @@ import logging
 from lxml import etree
 import pprint
 import requests
-from datetime import datetime
+from datetime import datetime, date
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 from odoo.tools.float_utils import float_compare
@@ -39,9 +39,9 @@ class PaymentAcquirerNuvei(models.Model):
 
     def _get_nuvei_urls(self, environment):
         if environment == 'prod':
-            return {'nuvei_form_url': 'https://testpayments.globalone.me/merchant/paymentpage'}
+            return {'nuvei_form_url': 'https://testpayments.nuvei.com/merchant/paymentpage'}
         else:
-            return {'nuvei_form_url': 'https://testpayments.globalone.me/merchant/paymentpage'}
+            return {'nuvei_form_url': 'https://testpayments.nuvei.com/merchant/paymentpage'}
 
     @api.multi
     def nuvei_get_form_action_url(self):
@@ -62,7 +62,7 @@ class PaymentAcquirerNuvei(models.Model):
 
         SECURECARDMERCHANTREF = ''.join(random.SystemRandom().choice("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") for i in range(48))
 
-        hash_value = str(TERMINALID) + ORDERID + CURRENCY + str(AMOUNT) + DATETIME_VALUE + RECEIPTPAGEURL + SECRET
+        hash_value = str(TERMINALID) + ORDERID + str(AMOUNT) + DATETIME_VALUE + RECEIPTPAGEURL + SECRET
         HASH = hashlib.md5(hash_value.encode('utf-8')).hexdigest()
 
         nuvei_values = dict(values,
@@ -81,6 +81,8 @@ class PaymentAcquirerNuvei(models.Model):
 
 class PaymentTransactionNuvei(models.Model):
     _inherit = 'payment.transaction'
+
+    auto_reconciliation_id = fields.Many2one("auto.reconciliation", "Auto Reconciliation")
 
     @api.model
     def _nuvei_form_get_tx_from_data(self, data):
@@ -119,17 +121,26 @@ class PaymentTransactionNuvei(models.Model):
         status = data.get('RESPONSECODE')
         res = {
             'acquirer_reference': data.get('ORDERID'),
+            'x_order_trans_id': date.get('ORDERID'),
             'date_validate': fields.Datetime.now(),
             'state_message': data.get('RESPONSETEXT') + '\n\n' + str(data)
         }
         if status == 'A':
             _logger.info('Validated Nuvei payment for reference %s: set as done' % pprint.pformat(self.reference))
-            res.update(state='done')
+            res.update(
+                state='done',
+                x_payment_channel='gop_cc',
+                x_card_type='ach',
+                x_card_holder_name='',
+                x_card_ach_num=data.get('CARDNUMBER', False),
+                x_exp_month=data.get('CARDEXPIRY', False) and data['CARDEXPIRY'][:2] or '',
+                x_exp_year=data.get('CARDEXPIRY', False) and data['CARDEXPIRY'][-2:] or '',
+                x_order_trans_date=fields.Date.today()
+            )
             self.write(res)
-            self.x_payment_channel = 'gop_cc'
             if self.partner_id and not self.payment_token_id and (self.type == 'form_save' or self.acquirer_id.save_token == 'always'):
                 token_id = self.env['payment.token'].create({
-                    'name': data.get('UNIQUEREF', False),
+                    'name': data.get('CARDNUMBER', False),
                     'acquirer_ref': data.get('CARDREFERENCE', False),
                     'card_expiry': data.get('CARDEXPIRY', False),
                     'card_type': data.get('CARDTYPE', False),
@@ -195,7 +206,7 @@ class PaymentTransactionNuvei(models.Model):
         data = doc.get("PAYMENTRESPONSE", doc)
         status = data.get('RESPONSECODE', False)
         res = {
-            'x_payment_channel': 'gop_cc',
+            'x_payment_channel': 'gop_ach',
             'acquirer_reference': data.get('UNIQUEREF', False),
             'date_validate': fields.Datetime.now(),
             'state_message': data.get('RESPONSETEXT', False) + '\n\n' + str(data)
@@ -305,6 +316,52 @@ class PaymentTransactionNuvei(models.Model):
             _logger.warning('<%s> transaction MISMATCH for order %s (ID %s)', self.acquirer_id.provider, self.sale_order_id.name, self.sale_order_id.id)
             return 'pay_sale_tx_state'
         return True
+
+    def open_matching_auto_reconciliation(self):
+        if not self.auto_reconciliation_id:
+            self.auto_reconciliation_id = self.env['auto.reconciliation'].create({
+                'transaction_id': self.id,
+                'partner_id': self.partner_id and self.partner_id.id,
+                'amount': self.amount})
+
+            domain = [('amount_total', '=', self.amount)]
+            if self.x_sb_wo_n:
+                domain.append(('x_qb', '=', self.x_qb))
+            invoice = self.env['account.invoice'].search(domain)
+            if len(invoice) == 1:
+                self.auto_reconciliation_id.write({
+                    'invoice_ids': [(6, 0, [invoice.id])],
+                    'state': 'invoice'
+                })
+
+            domain = [('amount', '=', self.amount)]
+            if self.x_sb_wo_n:
+                domain.append(('x_sb_wo_n', '=', self.x_sb_wo_n))
+            if self.x_qb:
+                domain.append(('x_qb_inv_num', '=', self.x_qb))
+            payment = self.env['account.payment'].search(domain)
+            if len(payment) == 1:
+                self.auto_reconciliation_id.write({
+                    'payment_id': invoice.payment_ids and invoice.payment_ids[0].id,
+                    'state': 'payment'
+                })
+
+            if len(invoice) == 1 and len(payment) == 1:
+                self.auto_reconciliation_id.state = 'matched'
+                self.auto_reconciliation_id.matched_date = date.today()
+
+        return {
+            'name': _('Auto Reconciliation'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': self.env.ref('payment_nuvei.view_auto_reconciliation_form').id,
+            'res_model': 'auto.reconciliation',
+            'context': {'default_transaction_id': self.id, 'default_partner_id': self.partner_id and self.partner_id.id, 'amount': self.amount},
+            'type': 'ir.actions.act_window',
+            'nodestroy': True,
+            'target': 'current',
+            'res_id': self.auto_reconciliation_id.id
+        }
 
 
 class PaymentToken(models.Model):

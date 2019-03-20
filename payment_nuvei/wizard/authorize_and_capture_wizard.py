@@ -73,7 +73,8 @@ class AuthorizeAndCaptureWizard(models.TransientModel):
 
             url = 'https://testpayments.globalone.me/merchant/xmlpayment'
             headers = {'Content-Type': 'application/xml'}
-            res = requests.post(url, data=xml, headers=headers).text
+            response = requests.post(url, data=xml, headers=headers).text
+            _logger.info('nuvei: Authorize & Capture wizard response %s', pprint.pformat(response))
 
             tx = self.env['payment.transaction'].create({'reference': self.order_id.name,
                                                          'acquirer_id': acquirer_id.id,
@@ -82,14 +83,13 @@ class AuthorizeAndCaptureWizard(models.TransientModel):
                                                          'currency_id': self.order_id.currency_id.id,
                                                          'partner_id': self.partner_id.id})
 
-            _logger.info('nuvei: Authorize & Capture wizard response %s', pprint.pformat(res))
-            doc = xmltodict.parse(res, dict_constructor=dict)
+            doc = xmltodict.parse(response, dict_constructor=dict)
             data = doc.get("PAYMENTRESPONSE", doc)
             status = data.get('RESPONSECODE', False)
             res = {
                 'acquirer_reference': data.get('UNIQUEREF', False),
                 'date_validate': fields.Datetime.now(),
-                'state_message': data.get('RESPONSETEXT', False) + '\n\n' + str(res)
+                'state_message': data.get('RESPONSETEXT', '') + '\n\n' + str(response)
             }
             if status == 'A':
                 _logger.info('Validated Nuvei payment for reference %s: set as done' % pprint.pformat(tx.reference))
@@ -119,9 +119,11 @@ class AuthorizeAndCaptureWizard(models.TransientModel):
                 _logger.info('Received notification for Nuvei payment %s: set as cancel' % (tx.reference))
                 res.update(state='cancel')
                 tx.write(res)
-                raise ValidationError(_('Received notification for Nuvei payment %s: set as cancel' % (tx.reference)))
+                raise ValidationError(_('Received notification for Nuvei payment %s: set as cancel' % (tx.reference, response)))
             else:
-                error = 'Received unrecognized status for Nuvei payment %s: %s, set as error' % (tx.reference, status)
+                if doc.get('ERROR', False):
+                    response = doc['ERROR']['ERRORSTRING']
+                error = 'Received unrecognized status/error for Nuvei payment %s: "%s", set as error' % (tx.reference, response)
                 _logger.info(error)
                 res.update(state='error', state_message=error)
                 tx.write(res)

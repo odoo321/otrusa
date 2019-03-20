@@ -15,6 +15,17 @@
         </field>
     </record>
 
+    <record id="transaction_form_nuvei" model="ir.ui.view">
+        <field name='name'>payment.transaction.form</field>
+        <field name='model'>payment.transaction</field>
+        <field name="inherit_id" ref="studio_customization.x_payment_transactio_c0c4c2a7-e5a3-4307-a744-25ed1b62088b"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button type="object" name="open_matching_auto_reconciliation" class="oe_stat_button" string="Matching" icon="fa-money"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="token_form_nuvei" model="ir.ui.view">
         <field name='name'>payment.token.form</field>
         <field name='model'>payment.token</field>
