@@ -25,6 +25,7 @@ Changelog
     'depends': ['payment', 'website_sale'],
     'external_dependencies': {'python': ['xmltodict']},
     'data': [
+        'security/ir.model.access.csv',
         'wizard/authorize_and_capture_wizard_view.xml',
         'views/assets.xml',
         'views/auto_reconciliation_views.xml',

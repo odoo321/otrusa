@@ -29,6 +29,7 @@ class NuveiController(http.Controller):
 
         if post.get('UNIQUEREF', False) and post.get('RESPONSECODE', False) == 'A':
             res = {
+                'reference': post.get('UNIQUEREF', False),
                 'acquirer_reference': post.get('UNIQUEREF', False),
                 'acquirer_id': acquirer_id.id,
                 'amount': post.get('AMOUNT'),
@@ -45,7 +46,7 @@ class NuveiController(http.Controller):
             }
             transaction_id = request.env['payment.transaction'].sudo().create(res)
 
-            transaction_id.auto_reconciliation_id = request.env['auto.reconciliation'].create({
+            transaction_id.auto_reconciliation_id = request.env['auto.reconciliation'].sudo().create({
                 'transaction_id': transaction_id.id,
                 'partner_id': transaction_id.partner_id and transaction_id.partner_id.id,
                 'amount': transaction_id.amount})
@@ -53,7 +54,7 @@ class NuveiController(http.Controller):
             domain = [('amount_total', '=', transaction_id.amount)]
             if transaction_id.x_sb_wo_n:
                 domain.append(('x_qb', '=', transaction_id.x_qb))
-            invoice = request.env['account.invoice'].search(domain)
+            invoice = request.env['account.invoice'].sudo().search(domain)
             if len(invoice) == 1:
                 transaction_id.auto_reconciliation_id.write({
                     'invoice_ids': [(6, 0, [invoice.id])],
@@ -65,7 +66,7 @@ class NuveiController(http.Controller):
                 domain.append(('x_sb_wo_n', '=', transaction_id.x_sb_wo_n))
             if transaction_id.x_qb:
                 domain.append(('x_qb_inv_num', '=', transaction_id.x_qb))
-            payment = self.env['account.payment'].search(domain)
+            payment = request.env['account.payment'].sudo().search(domain)
             if len(payment) == 1:
                 transaction_id.auto_reconciliation_id.write({
                     'payment_id': invoice.payment_ids and invoice.payment_ids[0].id,
