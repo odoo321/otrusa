@@ -28,54 +28,56 @@ class NuveiController(http.Controller):
         acquirer_id = request.env['payment.acquirer'].search([('provider', '=', 'nuvei')])
 
         if post.get('UNIQUEREF', False) and post.get('RESPONSECODE', False) == 'A':
-            res = {
-                'reference': post.get('UNIQUEREF', False),
-                'acquirer_reference': post.get('UNIQUEREF', False),
-                'acquirer_id': acquirer_id.id,
-                'amount': post.get('AMOUNT'),
-                'x_payment_channel': 'gop_cc',
-                'x_card_type': 'ach',
-                'x_order_trans_id': post.get('ORDERID', False),
-                'x_card_holder_name': '',
-                'x_card_ach_num': post.get('CARDNUMBER', False),
-                'x_exp_month': post.get('CARDEXPIRY', False) and post['CARDEXPIRY'][:2] or '',
-                'x_exp_year': post.get('CARDEXPIRY', False) and post['CARDEXPIRY'][-2:] or '',
-                'x_order_trans_date': datetime.strptime(post.get('DATETIME', False), '%Y-%m-%dT%H:%M:%S'),
-                'state': 'draft',
-                'x_note': post.get('RESPONSETEXT') + '\n\n' + str(post),
-            }
-            transaction_id = request.env['payment.transaction'].sudo().create(res)
+            transaction = request.env['payment.transaction'].sudo().search([('reference', 'in', [post['UNIQUEREF'], post['ORDERID']])])
+            if not transaction:
+                res = {
+                    'reference': post.get('UNIQUEREF', False),
+                    'acquirer_reference': post.get('UNIQUEREF', False),
+                    'acquirer_id': acquirer_id.id,
+                    'amount': post.get('AMOUNT'),
+                    'x_payment_channel': 'gop_cc',
+                    'x_card_type': 'ach',
+                    'x_order_trans_id': post.get('ORDERID', False),
+                    'x_card_holder_name': '',
+                    'x_card_ach_num': post.get('CARDNUMBER', False),
+                    'x_exp_month': post.get('CARDEXPIRY', False) and post['CARDEXPIRY'][:2] or '',
+                    'x_exp_year': post.get('CARDEXPIRY', False) and post['CARDEXPIRY'][-2:] or '',
+                    'x_order_trans_date': datetime.strptime(post.get('DATETIME', False), '%Y-%m-%dT%H:%M:%S'),
+                    'state': 'draft',
+                    'x_note': post.get('RESPONSETEXT') + '\n\n' + str(post),
+                }
+                transaction_id = request.env['payment.transaction'].sudo().create(res)
 
-            transaction_id.auto_reconciliation_id = request.env['auto.reconciliation'].sudo().create({
-                'transaction_id': transaction_id.id,
-                'partner_id': transaction_id.partner_id and transaction_id.partner_id.id,
-                'amount': transaction_id.amount})
+                transaction_id.auto_reconciliation_id = request.env['auto.reconciliation'].sudo().create({
+                    'transaction_id': transaction_id.id,
+                    'partner_id': transaction_id.partner_id and transaction_id.partner_id.id,
+                    'amount': transaction_id.amount})
 
-            domain = [('amount_total', '=', transaction_id.amount)]
-            if transaction_id.x_sb_wo_n:
-                domain.append(('x_qb', '=', transaction_id.x_qb))
-            invoice = request.env['account.invoice'].sudo().search(domain)
-            if len(invoice) == 1:
-                transaction_id.auto_reconciliation_id.write({
-                    'invoice_ids': [(6, 0, [invoice.id])],
-                    'state': 'invoice'
-                })
+                domain = [('amount_total', '=', transaction_id.amount)]
+                if transaction_id.x_sb_wo_n:
+                    domain.append(('x_qb', '=', transaction_id.x_qb))
+                invoice = request.env['account.invoice'].sudo().search(domain)
+                if len(invoice) == 1:
+                    transaction_id.auto_reconciliation_id.write({
+                        'invoice_ids': [(6, 0, [invoice.id])],
+                        'state': 'invoice'
+                    })
 
-            domain = [('amount', '=', transaction_id.amount)]
-            if transaction_id.x_sb_wo_n:
-                domain.append(('x_sb_wo_n', '=', transaction_id.x_sb_wo_n))
-            if transaction_id.x_qb:
-                domain.append(('x_qb_inv_num', '=', transaction_id.x_qb))
-            payment = request.env['account.payment'].sudo().search(domain)
-            if len(payment) == 1:
-                transaction_id.auto_reconciliation_id.write({
-                    'payment_id': invoice.payment_ids and invoice.payment_ids[0].id,
-                    'state': 'payment'
-                })
+                domain = [('amount', '=', transaction_id.amount)]
+                if transaction_id.x_sb_wo_n:
+                    domain.append(('x_sb_wo_n', '=', transaction_id.x_sb_wo_n))
+                if transaction_id.x_qb:
+                    domain.append(('x_qb_inv_num', '=', transaction_id.x_qb))
+                payment = request.env['account.payment'].sudo().search(domain)
+                if len(payment) == 1:
+                    transaction_id.auto_reconciliation_id.write({
+                        'payment_id': invoice.payment_ids and invoice.payment_ids[0].id,
+                        'state': 'payment'
+                    })
 
-            if len(invoice) == 1 and len(payment) == 1:
-                transaction_id.auto_reconciliation_id.state = 'matched'
-                transaction_id.auto_reconciliation_id.matched_date = date.today()
+                if len(invoice) == 1 and len(payment) == 1:
+                    transaction_id.auto_reconciliation_id.state = 'matched'
+                    transaction_id.auto_reconciliation_id.matched_date = date.today()
 
         return "OK"
 
