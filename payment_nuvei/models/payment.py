@@ -54,7 +54,7 @@ class PaymentAcquirerNuvei(models.Model):
 
         ORDERID = values.get("reference", False)
         CURRENCY = values['currency'] and values['currency'].name or ''
-        AMOUNT = values['amount'] and values['amount'] or ''
+        AMOUNT = values['amount'] and round(values['amount'], 2) or ''
         DATETIME_VALUE = datetime.now().strftime('%d-%m-%Y:%H:%M:%S:%f')[:-3]
         RECEIPTPAGEURL = base_url + (values.get('return_url', False) if 'invoice' in values['return_url'] else '/payment/nuvei/return')
         TERMINALID = self.nuvei_terminalid
@@ -73,6 +73,7 @@ class PaymentAcquirerNuvei(models.Model):
                             RECEIPTPAGEURL=RECEIPTPAGEURL,
                             TERMINALID=TERMINALID,
                             HASH=HASH)
+        _logger.info("______________ nuvei request: %s", str(nuvei_values))
         tx = self.env['payment.transaction'].search([('reference', '=', values.get("reference", False))])
         if tx and tx.type == 'form_save':
             nuvei_values.update({'SECURECARDMERCHANTREF': SECURECARDMERCHANTREF})
